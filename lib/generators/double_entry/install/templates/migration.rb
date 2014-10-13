@@ -5,6 +5,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.string   "account",    :null => false
       t.string   "scope"
       t.integer  "balance"
+      t.string   "currency"
       t.timestamps
     end
 

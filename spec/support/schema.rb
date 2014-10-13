@@ -5,6 +5,7 @@ ActiveRecord::Schema.define do
     t.string   "account",    :null => false
     t.string   "scope"
     t.integer  "balance"
+    t.string   "currency"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
