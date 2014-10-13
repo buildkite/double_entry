@@ -5,18 +5,20 @@ module DoubleEntry
     # @api private
     def self.account(defined_accounts, identifier, options = {})
       account = defined_accounts.find(identifier, options[:scope].present?)
-      DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
+      DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope], :currency => options[:currency])
     end
 
     # @api private
     def self.currency(defined_accounts, account)
-      code = account.is_a?(Symbol) ? account : account.identifier
+      if account.is_a?(Symbol)
+        found_account = defined_accounts.detect do |account|
+          account.identifier == account
+        end
 
-      found_account = defined_accounts.detect do |account|
-        account.identifier == code
+        found_account.currency
+      else
+        account.currency
       end
-
-      found_account.currency
     end
 
     # @api private
@@ -57,11 +59,12 @@ module DoubleEntry
     end
 
     class Instance
-      attr_accessor :account, :scope
-      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :currency, :to => :account
+      attr_accessor :account, :scope, :currency
+      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :to => :account
 
       def initialize(attributes)
         attributes.each { |name, value| send("#{name}=", value) }
+        self.currency ||= account.currency
       end
 
       def scope_identity

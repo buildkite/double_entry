@@ -370,15 +370,21 @@ describe DoubleEntry do
     end
 
     let(:bank) { DoubleEntry.account(:bank) }
+    let(:bank_aud) { DoubleEntry.account(:bank, :currency => "AUD") }
+    let(:bank_usd) { DoubleEntry.account(:bank, :currency => "USD") }
     let(:cash) { DoubleEntry.account(:cash) }
     let(:savings) { DoubleEntry.account(:savings) }
 
     let(:john) { User.make! }
     let(:johns_cash) { DoubleEntry.account(:cash, :scope => john) }
+    let(:johns_cash_usd) { DoubleEntry.account(:cash, :scope => john, :currency => "USD") }
+    let(:johns_cash_aud) { DoubleEntry.account(:cash, :scope => john, :currency => "AUD") }
     let(:johns_savings) { DoubleEntry.account(:savings, :scope => john) }
 
     let(:ryan) { User.make! }
     let(:ryans_cash) { DoubleEntry.account(:cash, :scope => ryan) }
+    let(:ryans_cash_aud) { DoubleEntry.account(:cash, :scope => ryan, :currency => "AUD") }
+    let(:ryans_cash_usd) { DoubleEntry.account(:cash, :scope => ryan, :currency => "USD") }
     let(:ryans_savings) { DoubleEntry.account(:savings, :scope => ryan) }
 
     it 'treats each separately scoped account having their own separate balances' do
@@ -386,6 +392,20 @@ describe DoubleEntry do
       DoubleEntry.transfer(Money.new(10_00), :from => bank, :to => ryans_cash, :code => :xfer)
       expect(johns_cash.balance).to eq Money.new(20_00)
       expect(ryans_cash.balance).to eq Money.new(10_00)
+    end
+
+    it 'scopes the accounts by currency' do
+      DoubleEntry.transfer(Money.new(10_00, "AUD"), :from => bank_aud, :to => ryans_cash_aud, :code => :xfer)
+      expect(ryans_cash.balance(:currency => "USD")).to eq Money.new(0, "USD")
+      expect(ryans_cash.balance(:currency => "AUD")).to eq Money.new(10_00, "AUD")
+      expect(ryans_cash_aud.balance).to eq Money.new(10_00, "AUD")
+      expect(ryans_cash_usd.balance).to eq Money.new(0, "USD")
+
+      DoubleEntry.transfer(Money.new(20_00, "USD"), :from => bank_usd, :to => johns_cash_usd, :code => :xfer)
+      expect(johns_cash.balance(:currency => "USD")).to eq Money.new(20_00, "USD")
+      expect(johns_cash.balance(:currency => "AUD")).to eq Money.new(0, "AUD")
+      expect(johns_cash_usd.balance).to eq Money.new(20_00, "USD")
+      expect(johns_cash_aud.balance).to eq Money.new(0, "AUD")
     end
 
     it 'allows transfer between two separately scoped accounts' do
