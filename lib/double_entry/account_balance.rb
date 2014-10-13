@@ -10,8 +10,6 @@ module DoubleEntry
   # Account balances are created on demand when transfers occur.
   class AccountBalance < ActiveRecord::Base
 
-    delegate :currency, :to => :account
-
     def balance
       self[:balance] && Money.new(self[:balance], currency)
     end
@@ -23,6 +21,7 @@ module DoubleEntry
     def account=(account)
       self[:account] = account.identifier.to_s
       self[:scope] = account.scope_identity
+      self[:currency] = account.currency.to_s
       account
     end
 
@@ -31,7 +30,7 @@ module DoubleEntry
     end
 
     def self.find_by_account(account, options = {})
-      scope = where(:scope => account.scope_identity, :account => account.identifier.to_s)
+      scope = where(:scope => account.scope_identity, :account => account.identifier.to_s, :currency => account.currency.to_s)
       scope = scope.lock(true) if options[:lock]
       scope.first
     end
