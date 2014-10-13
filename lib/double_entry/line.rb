@@ -96,6 +96,7 @@ module DoubleEntry
 
     def account=(_account)
       self[:account] = _account.identifier.to_s
+      self.currency = _account.currency.to_s
       self.scope = _account.scope_identity
       raise "Missing Account" unless account
       _account
@@ -103,10 +104,6 @@ module DoubleEntry
 
     def account
       DoubleEntry.account(self[:account].to_sym, :scope => scope)
-    end
-
-    def currency
-      account.currency if self[:account]
     end
 
     def partner_account=(_partner_account)

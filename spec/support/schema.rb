@@ -17,6 +17,7 @@ ActiveRecord::Schema.define do
     t.string   "account"
     t.string   "scope"
     t.string   "code"
+    t.string   "currency"
     t.integer  "amount"
     t.integer  "balance"
     t.integer  "partner_id"
