@@ -9,15 +9,15 @@ module DoubleEntry
     end
 
     # @api private
-    def self.currency(defined_accounts, account)
-      if account.is_a?(Symbol)
+    def self.currency(defined_accounts, target_account)
+      if target_account.is_a?(Symbol)
         found_account = defined_accounts.detect do |account|
-          account.identifier == account
+          account.identifier == target_account
         end
 
         found_account.currency
       else
-        account.currency
+        target_account.currency
       end
     end
 
