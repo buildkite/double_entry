@@ -9,8 +9,8 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index "double_entry_account_balances", ["account"], :name => "index_account_balances_on_account"
-    add_index "double_entry_account_balances", ["scope", "account"], :name => "index_account_balances_on_scope_and_account", :unique => true
+    add_index "double_entry_account_balances", ["account", "currency"], :name => "index_account_balances_on_account"
+    add_index "double_entry_account_balances", ["scope", "account", "currency"], :name => "index_account_balances_on_scope_and_account", :unique => true
 
     create_table "double_entry_lines", :force => true do |t|
       t.string   "account"
@@ -26,10 +26,10 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index "double_entry_lines", ["account", "code", "created_at"], :name => "lines_account_code_created_at_idx"
-    add_index "double_entry_lines", ["account", "created_at"], :name => "lines_account_created_at_idx"
-    add_index "double_entry_lines", ["scope", "account", "created_at"], :name => "lines_scope_account_created_at_idx"
-    add_index "double_entry_lines", ["scope", "account", "id"], :name => "lines_scope_account_id_idx"
+    add_index "double_entry_lines", ["account", "currency", "code", "created_at"], :name => "lines_account_code_created_at_idx"
+    add_index "double_entry_lines", ["account", "currency", "created_at"], :name => "lines_account_created_at_idx"
+    add_index "double_entry_lines", ["scope", "account", "currency", "created_at"], :name => "lines_scope_account_created_at_idx"
+    add_index "double_entry_lines", ["scope", "account", "currency", "id"], :name => "lines_scope_account_id_idx"
 
     create_table "double_entry_line_aggregates", :force => true do |t|
       t.string   "function"
