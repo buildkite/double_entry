@@ -8,8 +8,8 @@ describe DoubleEntry::Line do
   describe "persistance" do
     let(:persisted_line) {
       DoubleEntry::Line.new(
-        :amount => Money.new(10_00),
-        :balance => Money.empty,
+        :amount => Money.new(10_00, "AUD"),
+        :balance => Money.empty("AUD"),
         :account => account,
         :partner_account => partner_account,
         :code => code,
