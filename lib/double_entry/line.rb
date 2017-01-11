@@ -149,7 +149,7 @@ module DoubleEntry
     private
 
     def check_balance_will_not_be_sent_negative
-      if self.account.positive_only and self.balance < Money.new(0)
+      if self.account.positive_only and self.balance < Money.empty(currency)
         raise AccountWouldBeSentNegative.new(account)
       end
     end

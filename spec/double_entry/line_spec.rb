@@ -54,19 +54,31 @@ describe DoubleEntry::Line do
 
     describe '#save' do
       context 'when balance is sent negative' do
+        let(:currency) { Money.default_currency.id }
         let(:account) {
-          DoubleEntry.account(:savings, :scope => '17', :positive_only => true)
+          DoubleEntry.account(:savings,
+            :currency => currency,
+            :scope => '17',
+            :positive_only => true,
+          )
         }
-
         let(:line) {
           DoubleEntry::Line.new(
-            :balance => Money.new(-1),
+            :balance => Money.new(-1, currency),
             :account => account,
           )
         }
 
         it 'raises AccountWouldBeSentNegative exception' do
           expect { line.save }.to raise_error DoubleEntry::AccountWouldBeSentNegative
+        end
+
+        context 'in another currency' do
+          let(:currency) { "CAD" }
+
+          it 'raises AccountWouldBeSentNegative exception' do
+            expect { line.save }.to raise_error DoubleEntry::AccountWouldBeSentNegative
+          end
         end
       end
     end
